@@ -12,7 +12,7 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  # Lint runs on Linux (1x cost) — no Xcode needed.
+  # SwiftLint runs on Linux (1x cost) via the official container.
   lint:
     runs-on: ubuntu-latest
     steps:
@@ -21,12 +21,6 @@ jobs:
         run: |
           docker run --rm -v "${{ github.workspace }}:/work" -w /work \
             --entrypoint swiftlint ghcr.io/realm/swiftlint:0.62.2 lint --strict
-      - name: SwiftFormat
-        run: |
-          curl -fsSL -o "$RUNNER_TEMP/swiftformat" \
-            https://github.com/nicklockwood/SwiftFormat/releases/download/0.61.1/swiftformat_linux
-          chmod +x "$RUNNER_TEMP/swiftformat"
-          "$RUNNER_TEMP/swiftformat" --lint .
 
   test:
     runs-on: macos-15
@@ -35,6 +29,10 @@ jobs:
       - uses: maxim-lobanov/setup-xcode@v1
         with:
           xcode-version: latest-stable
+      # SwiftFormat has no reliable prebuilt Linux binary, so it rides on the
+      # macOS job (cheap: the job is already macOS and billed per whole minute).
+      - name: SwiftFormat
+        run: brew install swiftformat && swiftformat --lint .
       - name: Cache SwiftPM
         uses: actions/cache@v4
         with:

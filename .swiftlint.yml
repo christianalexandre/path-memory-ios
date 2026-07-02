@@ -1,0 +1,31 @@
+included:
+  - App
+  - Modules
+
+excluded:
+  - .build
+  - DerivedData
+  - Modules/.build
+  - "**/.build"
+
+opt_in_rules:
+  - empty_count
+  - first_where
+  - force_unwrapping
+  - implicitly_unwrapped_optional
+  - overridden_super_call
+  - redundant_nil_coalescing
+
+analyzer_rules:
+  - unused_import
+
+# Require trailing commas on multiline collections (matches SwiftFormat).
+trailing_comma:
+  mandatory_comma: true
+
+line_length:
+  warning: 120
+  error: 160
+
+identifier_name:
+  min_length: 2

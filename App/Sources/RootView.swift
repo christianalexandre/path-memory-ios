@@ -11,11 +11,14 @@ struct RootView: View {
     @State private var screen: Screen = .menu
 
     var body: some View {
-        switch screen {
-        case .menu:
-            MenuView(onPlay: { screen = .game })
-        case .game:
-            GameView(onExit: { screen = .menu })
+        Group {
+            switch screen {
+            case .menu:
+                MenuView(onPlay: { screen = .game })
+            case .game:
+                GameView(onExit: { screen = .menu })
+            }
         }
+        .preferredColorScheme(.dark)
     }
 }

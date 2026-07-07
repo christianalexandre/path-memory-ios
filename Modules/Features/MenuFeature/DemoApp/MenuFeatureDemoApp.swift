@@ -6,6 +6,7 @@ struct MenuFeatureDemoApp: App {
     var body: some Scene {
         WindowGroup {
             MenuView(onPlay: {})
+                .preferredColorScheme(.dark)
         }
     }
 }

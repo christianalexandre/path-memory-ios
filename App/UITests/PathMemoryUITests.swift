@@ -6,8 +6,10 @@ final class PathMemoryUITests: XCTestCase {
         let app = XCUIApplication()
         app.launch()
 
-        XCTAssertTrue(app.staticTexts["Path Memory"].waitForExistence(timeout: 5))
-        app.buttons["Play"].tap()
-        XCTAssertTrue(app.staticTexts["Game"].waitForExistence(timeout: 5))
+        let play = app.buttons["Play"]
+        XCTAssertTrue(play.waitForExistence(timeout: 5))
+        play.tap()
+
+        XCTAssertTrue(app.staticTexts["Memorize!"].waitForExistence(timeout: 5))
     }
 }

@@ -16,5 +16,6 @@ xcuserdata/
 # macOS
 .DS_Store
 
-# Design doc kept out of version control (intentional)
+# Design docs kept out of version control (intentional)
 docs/specs.md
+docs/layout-design.md

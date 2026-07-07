@@ -11,62 +11,27 @@ let package = Package(
     products: [
         .library(name: "GameFeature", targets: ["GameFeature"]),
         .library(name: "MenuFeature", targets: ["MenuFeature"]),
-        .library(name: "GRDBStorageRepository", targets: ["GRDBStorageRepository"]),
-        .library(name: "CoreHapticsService", targets: ["CoreHapticsService"]),
         .library(name: "UIComponents", targets: ["UIComponents"]),
     ],
-    dependencies: [
-        .package(url: "https://github.com/pointfreeco/swift-dependencies", from: "1.3.0"),
-        .package(url: "https://github.com/groue/GRDB.swift", from: "7.0.0"),
-    ],
     targets: [
-        .target(name: "Domain", path: "Domain/Sources", swiftSettings: strict),
-        .testTarget(name: "DomainTests", dependencies: ["Domain"], path: "Domain/Tests", swiftSettings: strict),
+        // Core: shared infrastructure consumed by the features' Data layers.
+        // Persistence (GRDB) and Haptics are added back when they get real code.
         .target(
-            name: "StorageRepository",
-            dependencies: ["Domain", .product(name: "Dependencies", package: "swift-dependencies")],
-            path: "Interfaces/StorageRepository/Sources",
-            swiftSettings: strict
-        ),
-        .target(
-            name: "HapticsService",
-            dependencies: ["Domain", .product(name: "Dependencies", package: "swift-dependencies")],
-            path: "Interfaces/HapticsService/Sources",
-            swiftSettings: strict
-        ),
-        .target(
-            name: "GRDBStorageRepository",
-            dependencies: [
-                "StorageRepository",
-                "Domain",
-                .product(name: "GRDB", package: "GRDB.swift"),
-                .product(name: "Dependencies", package: "swift-dependencies"),
-            ],
-            path: "Data/GRDBStorageRepository/Sources",
+            name: "UIComponents",
+            path: "Core/UIComponents/Sources",
+            resources: [.process("Localizable.xcstrings")],
             swiftSettings: strict
         ),
         .testTarget(
-            name: "GRDBStorageRepositoryTests",
-            dependencies: ["GRDBStorageRepository"],
-            path: "Data/GRDBStorageRepository/Tests",
+            name: "UIComponentsTests",
+            dependencies: ["UIComponents"],
+            path: "Core/UIComponents/Tests",
             swiftSettings: strict
         ),
-        .target(
-            name: "CoreHapticsService",
-            dependencies: ["HapticsService", .product(name: "Dependencies", package: "swift-dependencies")],
-            path: "Data/CoreHapticsService/Sources",
-            swiftSettings: strict
-        ),
-        .target(name: "UIComponents", path: "UIComponents/Sources", swiftSettings: strict),
+        // Features: each one owns its Presentation/Domain/Data layers internally.
         .target(
             name: "GameFeature",
-            dependencies: [
-                "Domain",
-                "StorageRepository",
-                "HapticsService",
-                "UIComponents",
-                .product(name: "Dependencies", package: "swift-dependencies"),
-            ],
+            dependencies: ["UIComponents"],
             path: "Features/GameFeature/Sources",
             resources: [.process("Localizable.xcstrings")],
             swiftSettings: strict
@@ -79,12 +44,7 @@ let package = Package(
         ),
         .target(
             name: "MenuFeature",
-            dependencies: [
-                "Domain",
-                "StorageRepository",
-                "UIComponents",
-                .product(name: "Dependencies", package: "swift-dependencies"),
-            ],
+            dependencies: ["UIComponents"],
             path: "Features/MenuFeature/Sources",
             resources: [.process("Localizable.xcstrings")],
             swiftSettings: strict

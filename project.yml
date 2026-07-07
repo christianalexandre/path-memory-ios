@@ -22,7 +22,7 @@ packages:
     path: Modules
 
 targets:
-  # App shell: wires the live infrastructure and drives navigation.
+  # App shell: drives navigation between the self-contained features.
   PathMemory:
     type: application
     platform: iOS
@@ -35,10 +35,6 @@ targets:
         product: GameFeature
       - package: PathMemoryKit
         product: MenuFeature
-      - package: PathMemoryKit
-        product: GRDBStorageRepository
-      - package: PathMemoryKit
-        product: CoreHapticsService
       - package: PathMemoryKit
         product: UIComponents
     preBuildScripts:

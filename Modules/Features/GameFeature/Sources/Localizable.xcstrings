@@ -1,22 +1,32 @@
 {
   "sourceLanguage" : "en",
   "strings" : {
-    "Back" : {
+    "Close" : {
       "localizations" : {
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Voltar"
+            "value" : "Fechar"
           }
         }
       }
     },
-    "Game" : {
+    "Memorize!" : {
       "localizations" : {
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Partida"
+            "value" : "Memorize!"
+          }
+        }
+      }
+    },
+    "Path · 8 dots" : {
+      "localizations" : {
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Caminho · 8 pontos"
           }
         }
       }

@@ -42,4 +42,13 @@ public struct GridMetrics: Equatable, Sendable {
             y: (CGFloat(point.row) + 0.5) * cellLength
         )
     }
+
+    /// Inverse of `center(of:)`; nil when the point is outside the grid.
+    public func coordinate(at point: CGPoint) -> GridPoint? {
+        guard cellLength > 0, point.x >= 0, point.y >= 0 else { return nil }
+        let column = Int(point.x / cellLength)
+        let row = Int(point.y / cellLength)
+        guard row >= 0, row < dotsPerSide, column >= 0, column < dotsPerSide else { return nil }
+        return GridPoint(row, column)
+    }
 }

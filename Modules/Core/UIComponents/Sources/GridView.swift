@@ -37,9 +37,17 @@ public struct GridConfiguration: Equatable, Sendable {
 @MainActor
 public struct GridView: View {
     private let configuration: GridConfiguration
+    private let onTouch: ((GridPoint) -> Void)?
+    private let onTouchEnded: (() -> Void)?
 
-    public init(configuration: GridConfiguration) {
+    public init(
+        configuration: GridConfiguration,
+        onTouch: ((GridPoint) -> Void)? = nil,
+        onTouchEnded: (() -> Void)? = nil
+    ) {
         self.configuration = configuration
+        self.onTouch = onTouch
+        self.onTouchEnded = onTouchEnded
     }
 
     public var body: some View {
@@ -72,8 +80,21 @@ public struct GridView: View {
                 }
             }
             .frame(width: side, height: side)
+            .contentShape(Rectangle())
+            .gesture(dragGesture(metrics: metrics))
             .frame(width: proxy.size.width, height: proxy.size.height)
         }
+    }
+
+    private func dragGesture(metrics: GridMetrics) -> some Gesture {
+        // minimumDistance 0 so a tap registers the same as a drag.
+        DragGesture(minimumDistance: 0)
+            .onChanged { value in
+                if let point = metrics.coordinate(at: value.location) {
+                    onTouch?(point)
+                }
+            }
+            .onEnded { _ in onTouchEnded?() }
     }
 }
 

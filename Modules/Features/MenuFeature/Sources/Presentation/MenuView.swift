@@ -1,18 +1,13 @@
+@_exported import SharedModels
 import SwiftUI
 import UIComponents
 
 @MainActor
 public struct MenuView: View {
-    private enum Difficulty: CaseIterable, Hashable {
-        case easy
-        case normal
-        case hard
-    }
-
-    private let onPlay: () -> Void
+    private let onPlay: (Difficulty) -> Void
     @State private var difficulty: Difficulty = .normal
 
-    public init(onPlay: @escaping () -> Void) {
+    public init(onPlay: @escaping (Difficulty) -> Void) {
         self.onPlay = onPlay
     }
 
@@ -100,7 +95,9 @@ public struct MenuView: View {
                     .foregroundStyle(PMTheme.textFaint)
                 DifficultyPills(options: Difficulty.allCases, selection: $difficulty, label: label(for:))
             }
-            Button(action: onPlay) {
+            Button {
+                onPlay(difficulty)
+            } label: {
                 HStack(spacing: 12) {
                     Image(systemName: "play.fill")
                     Text("Play", bundle: .module)
@@ -120,5 +117,5 @@ public struct MenuView: View {
 }
 
 #Preview {
-    MenuView(onPlay: {})
+    MenuView(onPlay: { _ in })
 }

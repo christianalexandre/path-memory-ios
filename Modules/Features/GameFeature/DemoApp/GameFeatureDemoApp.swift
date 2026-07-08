@@ -5,7 +5,7 @@ import SwiftUI
 struct GameFeatureDemoApp: App {
     var body: some Scene {
         WindowGroup {
-            GameView(onExit: {})
+            GameView(difficulty: .normal, onExit: {})
                 .preferredColorScheme(.dark)
         }
     }

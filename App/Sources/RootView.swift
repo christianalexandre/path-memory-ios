@@ -5,7 +5,7 @@ import SwiftUI
 struct RootView: View {
     private enum Screen {
         case menu
-        case game
+        case game(Difficulty)
     }
 
     @State private var screen: Screen = .menu
@@ -14,9 +14,9 @@ struct RootView: View {
         Group {
             switch screen {
             case .menu:
-                MenuView(onPlay: { screen = .game })
-            case .game:
-                GameView(onExit: { screen = .menu })
+                MenuView(onPlay: { screen = .game($0) })
+            case let .game(difficulty):
+                GameView(difficulty: difficulty, onExit: { screen = .menu })
             }
         }
         .preferredColorScheme(.dark)

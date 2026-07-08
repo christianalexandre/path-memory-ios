@@ -13,9 +13,38 @@ let package = Package(
         .library(name: "MenuFeature", targets: ["MenuFeature"]),
         .library(name: "UIComponents", targets: ["UIComponents"]),
     ],
+    dependencies: [
+        .package(url: "https://github.com/pointfreeco/swift-dependencies", from: "1.0.0"),
+    ],
     targets: [
         // Core: shared infrastructure consumed by the features' Data layers.
         // Persistence (GRDB) and Haptics are added back when they get real code.
+        .target(
+            name: "SharedModels",
+            path: "Core/SharedModels/Sources",
+            swiftSettings: strict
+        ),
+        .testTarget(
+            name: "SharedModelsTests",
+            dependencies: ["SharedModels"],
+            path: "Core/SharedModels/Tests",
+            swiftSettings: strict
+        ),
+        .target(
+            name: "Persistence",
+            dependencies: [
+                "SharedModels",
+                .product(name: "Dependencies", package: "swift-dependencies"),
+            ],
+            path: "Core/Persistence/Sources",
+            swiftSettings: strict
+        ),
+        .testTarget(
+            name: "PersistenceTests",
+            dependencies: ["Persistence"],
+            path: "Core/Persistence/Tests",
+            swiftSettings: strict
+        ),
         .target(
             name: "UIComponents",
             path: "Core/UIComponents/Sources",
@@ -31,7 +60,12 @@ let package = Package(
         // Features: each one owns its Presentation/Domain/Data layers internally.
         .target(
             name: "GameFeature",
-            dependencies: ["UIComponents"],
+            dependencies: [
+                "UIComponents",
+                "SharedModels",
+                "Persistence",
+                .product(name: "Dependencies", package: "swift-dependencies"),
+            ],
             path: "Features/GameFeature/Sources",
             resources: [.process("Localizable.xcstrings")],
             swiftSettings: strict
@@ -44,7 +78,7 @@ let package = Package(
         ),
         .target(
             name: "MenuFeature",
-            dependencies: ["UIComponents"],
+            dependencies: ["UIComponents", "SharedModels"],
             path: "Features/MenuFeature/Sources",
             resources: [.process("Localizable.xcstrings")],
             swiftSettings: strict

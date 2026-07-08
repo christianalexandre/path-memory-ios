@@ -2,5 +2,5 @@ import Testing
 @testable import MenuFeature
 
 @Test @MainActor func menuViewBuilds() {
-    _ = MenuView(onPlay: {})
+    _ = MenuView(onPlay: { _ in })
 }

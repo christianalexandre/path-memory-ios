@@ -1,3 +1,5 @@
+import Dependencies
+import Persistence
 @_exported import SharedModels
 import SwiftUI
 import UIComponents
@@ -6,6 +8,7 @@ import UIComponents
 public struct MenuView: View {
     private let onPlay: (Difficulty) -> Void
     @State private var difficulty: Difficulty = .normal
+    @Dependency(\.storageRepository) private var storage
 
     public init(onPlay: @escaping (Difficulty) -> Void) {
         self.onPlay = onPlay
@@ -74,7 +77,7 @@ public struct MenuView: View {
                 .textCase(.uppercase)
                 .kerning(1.8)
                 .foregroundStyle(PMTheme.textSecondary)
-            Text(verbatim: "1240")
+            Text(verbatim: "\(storage.bestScore(for: difficulty))")
                 .font(.system(size: 15, weight: .bold, design: .rounded))
                 .foregroundStyle(PMTheme.accent)
                 .shadow(color: PMTheme.accent.opacity(0.5), radius: 6)

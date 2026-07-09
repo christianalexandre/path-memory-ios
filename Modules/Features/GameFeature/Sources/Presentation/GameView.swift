@@ -46,9 +46,9 @@ public struct GameView: View {
             }
         }
         .animation(.easeInOut(duration: 0.25), value: viewModel.phase)
-        .onAppear { viewModel.begin() }
         .task(id: viewModel.phase) {
             switch viewModel.phase {
+            case .idle: viewModel.begin()
             case .revealing: await viewModel.reveal()
             case .phaseCleared: await viewModel.advance()
             default: break

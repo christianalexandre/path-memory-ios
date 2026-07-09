@@ -59,7 +59,11 @@ public final class GameViewModel {
 
     public func reveal() async {
         guard phase == .revealing else { return }
-        try? await clock.sleep(for: config.revealDuration)
+        do {
+            try await clock.sleep(for: config.revealDuration)
+        } catch {
+            return
+        }
         guard phase == .revealing else { return }
         recallStart = date.now
         phase = .recalling
@@ -67,7 +71,11 @@ public final class GameViewModel {
 
     public func advance() async {
         guard phase == .phaseCleared else { return }
-        try? await clock.sleep(for: .milliseconds(900))
+        do {
+            try await clock.sleep(for: .milliseconds(900))
+        } catch {
+            return
+        }
         guard phase == .phaseCleared else { return }
         level += 1
         lives = Self.maxLives
@@ -82,6 +90,7 @@ public final class GameViewModel {
 
     public func handleTouch(_ coordinate: Coordinate) {
         guard phase == .recalling else { return }
+        guard wrongCell == nil else { return }
         if activated.contains(coordinate) {
             fingerCell = coordinate
             return
@@ -107,9 +116,9 @@ public final class GameViewModel {
         }
     }
 
-    /// Finger lifted keeps progress; only drop the highlight.
     public func endTouch() {
         fingerCell = nil
+        wrongCell = nil
     }
 
     private func configurePhase() {

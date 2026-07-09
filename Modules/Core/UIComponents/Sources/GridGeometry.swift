@@ -51,4 +51,27 @@ public struct GridMetrics: Equatable, Sendable {
         guard row >= 0, row < dotsPerSide, column >= 0, column < dotsPerSide else { return nil }
         return GridPoint(row, column)
     }
+
+    public func dot(near point: CGPoint) -> GridPoint? {
+        guard let cell = coordinate(at: point) else { return nil }
+        let center = center(of: cell)
+        let dx = point.x - center.x
+        let dy = point.y - center.y
+        let hotRadius = cellLength * 0.4
+        return dx * dx + dy * dy <= hotRadius * hotRadius ? cell : nil
+    }
+
+    public static func straightLine(from start: GridPoint, to end: GridPoint) -> [GridPoint] {
+        if start.row == end.row {
+            let step = end.column > start.column ? 1 : -1
+            return stride(from: start.column + step, to: end.column, by: step)
+                .map { GridPoint(start.row, $0) }
+        }
+        if start.column == end.column {
+            let step = end.row > start.row ? 1 : -1
+            return stride(from: start.row + step, to: end.row, by: step)
+                .map { GridPoint($0, start.column) }
+        }
+        return []
+    }
 }

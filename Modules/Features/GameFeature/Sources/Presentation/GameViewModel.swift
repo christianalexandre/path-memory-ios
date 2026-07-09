@@ -21,6 +21,7 @@ public final class GameViewModel {
     public private(set) var fingerCell: Coordinate?
     public private(set) var wrongCell: Coordinate?
     public private(set) var finalScore = 0
+    public private(set) var review: RunReview?
 
     public var gridSize: Int {
         config.gridSize
@@ -53,6 +54,7 @@ public final class GameViewModel {
         score = 0
         level = 1
         lives = Self.maxLives
+        review = nil
         configurePhase()
         phase = .revealing
     }
@@ -103,22 +105,28 @@ public final class GameViewModel {
             expected = sequence
         }
         let nextIndex = activated.count
-        guard nextIndex < expected.count, expected[nextIndex] == coordinate else {
-            registerMiss(at: coordinate)
+        if nextIndex < expected.count, expected[nextIndex] == coordinate {
+            activated.append(coordinate)
+            fingerCell = coordinate
+            wrongCell = nil
+            haptics.success()
+            if activated.count == expected.count {
+                clearPhase()
+            }
             return
         }
-        activated.append(coordinate)
-        fingerCell = coordinate
-        wrongCell = nil
-        haptics.success()
-        if activated.count == expected.count {
-            clearPhase()
+        if let last = activated.last, isAdjacent(coordinate, last) {
+            registerMiss(at: coordinate)
         }
     }
 
     public func endTouch() {
         fingerCell = nil
         wrongCell = nil
+    }
+
+    private func isAdjacent(_ lhs: Coordinate, _ rhs: Coordinate) -> Bool {
+        abs(lhs.row - rhs.row) + abs(lhs.column - rhs.column) == 1
     }
 
     private func configurePhase() {
@@ -136,12 +144,13 @@ public final class GameViewModel {
         lives -= 1
         storage.recordMiss(at: coordinate, difficulty: difficulty)
         haptics.failure()
+        if lives <= 0 {
+            endGame(wrong: coordinate)
+            return
+        }
         activated = []
         expected = []
         fingerCell = nil
-        if lives <= 0 {
-            endGame()
-        }
     }
 
     private func clearPhase() {
@@ -152,10 +161,12 @@ public final class GameViewModel {
         phase = .phaseCleared
     }
 
-    private func endGame() {
+    private func endGame(wrong: Coordinate) {
+        review = RunReview(path: path.coordinates, trace: activated, wrong: wrong)
         finalScore = score
         storage.save(GameResult(score: score, level: level, difficulty: difficulty))
-        haptics.failure()
+        activated = []
+        expected = []
         fingerCell = nil
         phase = .gameOver
     }

@@ -116,6 +116,20 @@ private func makeViewModel(
     #expect(store.missCount(at: miss, difficulty: .easy) == 1)
 }
 
+@Test @MainActor func farJumpsAreIgnoredButAdjacentWrongTurnsMiss() async {
+    let viewModel = makeViewModel()
+    viewModel.begin()
+    await viewModel.reveal()
+
+    viewModel.handleTouch(Coordinate(row: 0, column: 0)) // correct start
+    viewModel.handleTouch(Coordinate(row: 3, column: 3)) // far artifact -> ignored
+    #expect(viewModel.lives == 3)
+    #expect(viewModel.activated == [Coordinate(row: 0, column: 0)])
+
+    viewModel.handleTouch(Coordinate(row: 1, column: 0)) // adjacent wrong turn -> miss
+    #expect(viewModel.lives == 2)
+}
+
 @Test @MainActor func oneDragCostsAtMostOneLife() async {
     let viewModel = makeViewModel()
     viewModel.begin()
@@ -131,6 +145,23 @@ private func makeViewModel(
     viewModel.endTouch()
     viewModel.handleTouch(Coordinate(row: 3, column: 3))
     #expect(viewModel.lives == 1)
+}
+
+@Test @MainActor func gameOverCapturesSolutionAndWhatThePlayerTraced() async {
+    let viewModel = makeViewModel()
+    viewModel.begin()
+    await viewModel.reveal()
+
+    for _ in 0 ..< 3 {
+        viewModel.handleTouch(Coordinate(row: 0, column: 0))
+        viewModel.handleTouch(Coordinate(row: 1, column: 0))
+        viewModel.endTouch()
+    }
+
+    #expect(viewModel.phase == .gameOver)
+    #expect(viewModel.review?.path == line.coordinates)
+    #expect(viewModel.review?.trace == [Coordinate(row: 0, column: 0)])
+    #expect(viewModel.review?.wrong == Coordinate(row: 1, column: 0))
 }
 
 @Test @MainActor func threeMissesEndTheGameAndPersistTheRun() async {

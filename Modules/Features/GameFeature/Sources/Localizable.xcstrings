@@ -91,6 +91,26 @@
         }
       }
     },
+    "The path" : {
+      "localizations" : {
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "O caminho"
+          }
+        }
+      }
+    },
+    "You" : {
+      "localizations" : {
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Você"
+          }
+        }
+      }
+    },
     "Your score" : {
       "localizations" : {
         "pt-BR" : {

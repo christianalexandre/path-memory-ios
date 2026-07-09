@@ -39,6 +39,7 @@ public struct GameView: View {
                 ResultView(
                     score: viewModel.finalScore,
                     best: viewModel.bestScore,
+                    review: reviewConfiguration,
                     onRetry: { viewModel.retry() },
                     onMenu: onExit
                 )
@@ -79,9 +80,22 @@ public struct GameView: View {
             config.trail = pathPoints
             config.trailColor = PMTheme.success
         case .gameOver:
-            config.litDots = Set(pathPoints)
-            config.trail = pathPoints
+            break
         }
+        return config
+    }
+
+    private var reviewConfiguration: GridConfiguration? {
+        guard let review = viewModel.review else { return nil }
+        var config = GridConfiguration(dotsPerSide: viewModel.gridSize)
+        let path = review.path.map(gridPoint)
+        config.ghostDots = Set(path)
+        config.ghostTrail = path
+        let trace = review.trace.map(gridPoint)
+        config.correctDots = Set(trace)
+        config.userTrail = trace
+        config.userTrailColor = PMTheme.success
+        config.wrongDots = [gridPoint(review.wrong)]
         return config
     }
 

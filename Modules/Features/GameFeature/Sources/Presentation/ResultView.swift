@@ -5,6 +5,7 @@ import UIComponents
 struct ResultView: View {
     let score: Int
     let best: Int
+    let review: GridConfiguration?
     let onRetry: () -> Void
     let onMenu: () -> Void
 
@@ -15,7 +16,11 @@ struct ResultView: View {
                 Spacer()
                 PhaseBanner(Text("Game Over", bundle: .module), tone: .danger)
                 scoreBlock
-                    .padding(.top, 30)
+                    .padding(.top, 24)
+                if let review {
+                    reviewBoard(review)
+                        .padding(.top, 24)
+                }
                 Spacer()
                 VStack(spacing: 14) {
                     Button(action: onRetry) {
@@ -57,6 +62,29 @@ struct ResultView: View {
         }
     }
 
+    private func reviewBoard(_ config: GridConfiguration) -> some View {
+        VStack(spacing: 12) {
+            caption(Text("The path", bundle: .module))
+            GridView(configuration: config)
+                .aspectRatio(1, contentMode: .fit)
+                .frame(maxWidth: 180)
+                .allowsHitTesting(false)
+            HStack(spacing: 18) {
+                legendItem(color: PMTheme.success, label: Text("You", bundle: .module))
+                legendItem(color: PMTheme.danger, label: Text("Missed", bundle: .module))
+            }
+        }
+    }
+
+    private func legendItem(color: Color, label: Text) -> some View {
+        HStack(spacing: 6) {
+            Circle().fill(color).frame(width: 8, height: 8)
+            label
+                .font(.system(size: 11, weight: .medium, design: .rounded))
+                .foregroundStyle(PMTheme.textSecondary)
+        }
+    }
+
     private func caption(_ text: Text) -> some View {
         text
             .font(.system(size: 9, weight: .semibold, design: .monospaced))
@@ -67,5 +95,13 @@ struct ResultView: View {
 }
 
 #Preview {
-    ResultView(score: 1240, best: 2600, onRetry: {}, onMenu: {})
+    var config = GridConfiguration(dotsPerSide: 5)
+    let path = [GridPoint(0, 0), GridPoint(0, 1), GridPoint(1, 1), GridPoint(2, 1)]
+    config.ghostDots = Set(path)
+    config.ghostTrail = path
+    config.correctDots = [GridPoint(0, 0), GridPoint(0, 1)]
+    config.userTrail = [GridPoint(0, 0), GridPoint(0, 1)]
+    config.userTrailColor = PMTheme.success
+    config.wrongDots = [GridPoint(1, 0)]
+    return ResultView(score: 1240, best: 2600, review: config, onRetry: {}, onMenu: {})
 }

@@ -39,6 +39,7 @@ public struct GridView: View {
     private let configuration: GridConfiguration
     private let onTouch: ((GridPoint) -> Void)?
     private let onTouchEnded: (() -> Void)?
+    @State private var lastTouched: GridPoint?
 
     public init(
         configuration: GridConfiguration,
@@ -90,11 +91,19 @@ public struct GridView: View {
         // minimumDistance 0 so a tap registers the same as a drag.
         DragGesture(minimumDistance: 0)
             .onChanged { value in
-                if let point = metrics.coordinate(at: value.location) {
-                    onTouch?(point)
+                guard let point = metrics.dot(near: value.location), point != lastTouched else { return }
+                if let previous = lastTouched {
+                    for skipped in GridMetrics.straightLine(from: previous, to: point) {
+                        onTouch?(skipped)
+                    }
                 }
+                onTouch?(point)
+                lastTouched = point
             }
-            .onEnded { _ in onTouchEnded?() }
+            .onEnded { _ in
+                lastTouched = nil
+                onTouchEnded?()
+            }
     }
 }
 

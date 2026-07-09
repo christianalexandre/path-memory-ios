@@ -78,7 +78,12 @@ let package = Package(
         ),
         .target(
             name: "MenuFeature",
-            dependencies: ["UIComponents", "SharedModels"],
+            dependencies: [
+                "UIComponents",
+                "SharedModels",
+                "Persistence",
+                .product(name: "Dependencies", package: "swift-dependencies"),
+            ],
             path: "Features/MenuFeature/Sources",
             resources: [.process("Localizable.xcstrings")],
             swiftSettings: strict

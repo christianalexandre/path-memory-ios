@@ -116,6 +116,23 @@ private func makeViewModel(
     #expect(store.missCount(at: miss, difficulty: .easy) == 1)
 }
 
+@Test @MainActor func oneDragCostsAtMostOneLife() async {
+    let viewModel = makeViewModel()
+    viewModel.begin()
+    await viewModel.reveal()
+
+    // A single drag sliding over several wrong cells is one failed attempt.
+    viewModel.handleTouch(Coordinate(row: 3, column: 3))
+    viewModel.handleTouch(Coordinate(row: 3, column: 4))
+    viewModel.handleTouch(Coordinate(row: 4, column: 4))
+    #expect(viewModel.lives == 2)
+
+    // Lifting the finger arms the next attempt, which can miss again.
+    viewModel.endTouch()
+    viewModel.handleTouch(Coordinate(row: 3, column: 3))
+    #expect(viewModel.lives == 1)
+}
+
 @Test @MainActor func threeMissesEndTheGameAndPersistTheRun() async {
     let store = InMemoryStorageRepository()
     let viewModel = makeViewModel(storage: store)
@@ -125,6 +142,7 @@ private func makeViewModel(
     let miss = Coordinate(row: 3, column: 3)
     for _ in 0 ..< 3 {
         viewModel.handleTouch(miss)
+        viewModel.endTouch()
     }
 
     #expect(viewModel.phase == .gameOver)
@@ -138,6 +156,7 @@ private func makeViewModel(
     await viewModel.reveal()
     for _ in 0 ..< 3 {
         viewModel.handleTouch(Coordinate(row: 3, column: 3))
+        viewModel.endTouch()
     }
     #expect(viewModel.phase == .gameOver)
 

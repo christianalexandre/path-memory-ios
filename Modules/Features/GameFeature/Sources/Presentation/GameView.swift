@@ -6,10 +6,19 @@ import UIComponents
 public struct GameView: View {
     @State private var viewModel: GameViewModel
     private let onExit: () -> Void
+    private let drivesPhases: Bool
 
     public init(difficulty: Difficulty, onExit: @escaping () -> Void) {
         _viewModel = State(initialValue: GameViewModel(difficulty: difficulty))
         self.onExit = onExit
+        drivesPhases = true
+    }
+
+    /// Test seam: inject a pre-driven view model and freeze the phase driver.
+    init(viewModel: GameViewModel, onExit: @escaping () -> Void) {
+        _viewModel = State(initialValue: viewModel)
+        self.onExit = onExit
+        drivesPhases = false
     }
 
     public var body: some View {
@@ -48,6 +57,7 @@ public struct GameView: View {
         }
         .animation(.easeInOut(duration: 0.25), value: viewModel.phase)
         .task(id: viewModel.phase) {
+            guard drivesPhases else { return }
             switch viewModel.phase {
             case .idle: viewModel.begin()
             case .revealing: await viewModel.reveal()

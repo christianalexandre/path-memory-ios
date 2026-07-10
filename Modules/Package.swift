@@ -3,6 +3,17 @@ import PackageDescription
 
 let strict: [SwiftSetting] = [.unsafeFlags(["-warnings-as-errors"])]
 
+/// iOS-only so the host `swift test`/coverage build never compiles the
+/// snapshot toolchain (it runs only on the simulator).
+let snapshotTestDeps: [Target.Dependency] = [
+    .target(name: "SnapshotSupport", condition: .when(platforms: [.iOS])),
+    .product(
+        name: "SnapshotTesting",
+        package: "swift-snapshot-testing",
+        condition: .when(platforms: [.iOS])
+    ),
+]
+
 let package = Package(
     name: "PathMemoryKit",
     defaultLocalization: "en",
@@ -15,6 +26,7 @@ let package = Package(
     ],
     dependencies: [
         .package(url: "https://github.com/pointfreeco/swift-dependencies", from: "1.0.0"),
+        .package(url: "https://github.com/pointfreeco/swift-snapshot-testing", from: "1.18.0"),
     ],
     targets: [
         // Core: shared infrastructure consumed by the features' Data layers.
@@ -57,6 +69,25 @@ let package = Package(
             path: "Core/UIComponents/Tests",
             swiftSettings: strict
         ),
+        .testTarget(
+            name: "UIComponentsSnapshotTests",
+            dependencies: ["UIComponents"] + snapshotTestDeps,
+            path: "Core/UIComponents/SnapshotTests",
+            swiftSettings: strict
+        ),
+        // Test-only helper target shared by the per-module snapshot targets.
+        .target(
+            name: "SnapshotSupport",
+            dependencies: [
+                .product(
+                    name: "SnapshotTesting",
+                    package: "swift-snapshot-testing",
+                    condition: .when(platforms: [.iOS])
+                ),
+            ],
+            path: "SnapshotSupport/Sources",
+            swiftSettings: strict
+        ),
         // Features: each one owns its Presentation/Domain/Data layers internally.
         .target(
             name: "GameFeature",
@@ -76,6 +107,12 @@ let package = Package(
             path: "Features/GameFeature/Tests",
             swiftSettings: strict
         ),
+        .testTarget(
+            name: "GameFeatureSnapshotTests",
+            dependencies: ["GameFeature"] + snapshotTestDeps,
+            path: "Features/GameFeature/SnapshotTests",
+            swiftSettings: strict
+        ),
         .target(
             name: "MenuFeature",
             dependencies: [
@@ -92,6 +129,12 @@ let package = Package(
             name: "MenuFeatureTests",
             dependencies: ["MenuFeature"],
             path: "Features/MenuFeature/Tests",
+            swiftSettings: strict
+        ),
+        .testTarget(
+            name: "MenuFeatureSnapshotTests",
+            dependencies: ["MenuFeature"] + snapshotTestDeps,
+            path: "Features/MenuFeature/SnapshotTests",
             swiftSettings: strict
         ),
     ]

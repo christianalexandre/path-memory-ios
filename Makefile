@@ -1,8 +1,13 @@
 .DEFAULT_GOAL := help
 SCHEME := PathMemory
 SIMULATOR ?= iPhone 16 Pro
+# Override with a UDID where the name lookup fails: SIM_DEST='id=<sim-udid>'
+SIM_DEST ?= platform=iOS Simulator,name=$(SIMULATOR)
+SNAPSHOT_ONLY := -only-testing:GameFeatureSnapshotTests \
+	-only-testing:MenuFeatureSnapshotTests \
+	-only-testing:UIComponentsSnapshotTests
 
-.PHONY: bootstrap gen open lint format test coverage build clean help
+.PHONY: bootstrap gen open lint format test coverage build snapshot snapshot-record clean help
 
 bootstrap: ## Install tools, wire git hooks, generate project, resolve deps
 	brew bundle
@@ -31,7 +36,19 @@ coverage: ## Run unit tests with the coverage gate
 
 build: ## Build the app for the simulator
 	xcodebuild -project PathMemory.xcodeproj -scheme $(SCHEME) \
-		-destination 'platform=iOS Simulator,name=$(SIMULATOR)' build
+		-destination '$(SIM_DEST)' build
+
+snapshot: ## Assert the view-layer image snapshots on the simulator
+	cd Modules && xcrun xcodebuild test \
+		-scheme PathMemoryKit-Package \
+		-destination '$(SIM_DEST)' \
+		$(SNAPSHOT_ONLY)
+
+snapshot-record: ## Re-record the view-layer snapshot references
+	cd Modules && SNAPSHOT_TESTING_RECORD=all xcrun xcodebuild test \
+		-scheme PathMemoryKit-Package \
+		-destination '$(SIM_DEST)' \
+		$(SNAPSHOT_ONLY)
 
 clean: ## Remove build artifacts and the generated project
 	rm -rf Modules/.build DerivedData PathMemory.xcodeproj

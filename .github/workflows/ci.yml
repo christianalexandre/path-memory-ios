@@ -26,10 +26,12 @@ jobs:
     runs-on: macos-15
     steps:
       - uses: actions/checkout@v4
+      # Only the PR→main steps (build, snapshots) need a pinned renderer; other
+      # triggers run lint/coverage on the runner's default Xcode.
       - uses: maxim-lobanov/setup-xcode@v1
+        if: github.event_name == 'pull_request' && github.base_ref == 'main'
         with:
-          # Pinned to match the renderer the snapshot references were recorded on.
-          xcode-version: "26.4"
+          xcode-version: "26.3"
       # SwiftFormat has no reliable prebuilt Linux binary, so it rides on the
       # macOS job (cheap: the job is already macOS and billed per whole minute).
       - name: SwiftFormat

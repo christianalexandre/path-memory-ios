@@ -1,12 +1,32 @@
 {
   "sourceLanguage" : "en",
   "strings" : {
+    "Best" : {
+      "localizations" : {
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Recorde"
+          }
+        }
+      }
+    },
     "Close" : {
       "localizations" : {
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Fechar"
+          }
+        }
+      }
+    },
+    "Game Over" : {
+      "localizations" : {
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fim de Jogo"
           }
         }
       }
@@ -21,12 +41,82 @@
         }
       }
     },
-    "Path · 8 dots" : {
+    "Menu" : {
       "localizations" : {
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Caminho · 8 pontos"
+            "value" : "Menu"
+          }
+        }
+      }
+    },
+    "Missed" : {
+      "localizations" : {
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Errou"
+          }
+        }
+      }
+    },
+    "Perfect!" : {
+      "localizations" : {
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Perfeito!"
+          }
+        }
+      }
+    },
+    "Recall!" : {
+      "localizations" : {
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Reproduza!"
+          }
+        }
+      }
+    },
+    "Retry" : {
+      "localizations" : {
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tentar de novo"
+          }
+        }
+      }
+    },
+    "The path" : {
+      "localizations" : {
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "O caminho"
+          }
+        }
+      }
+    },
+    "You" : {
+      "localizations" : {
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Você"
+          }
+        }
+      }
+    },
+    "Your score" : {
+      "localizations" : {
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sua pontuação"
           }
         }
       }

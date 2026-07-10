@@ -1,17 +1,14 @@
+@_exported import SharedModels
 import SwiftUI
 import UIComponents
 
-/// Static mockup of the in-round screen; the live game loop arrives with the ViewModel.
 @MainActor
 public struct GameView: View {
-    private static let path = [
-        GridPoint(0, 2), GridPoint(2, 2), GridPoint(2, 0), GridPoint(4, 0),
-        GridPoint(4, 3), GridPoint(1, 3), GridPoint(1, 5), GridPoint(5, 5),
-    ]
-
+    @State private var viewModel: GameViewModel
     private let onExit: () -> Void
 
-    public init(onExit: @escaping () -> Void) {
+    public init(difficulty: Difficulty, onExit: @escaping () -> Void) {
+        _viewModel = State(initialValue: GameViewModel(difficulty: difficulty))
         self.onExit = onExit
     }
 
@@ -20,32 +17,104 @@ public struct GameView: View {
             NeonBackground()
             VStack(spacing: 0) {
                 closeRow
-                HUDView(score: 1240, level: 7, lives: 3)
+                HUDView(score: viewModel.score, level: viewModel.level, lives: viewModel.lives)
                     .padding(.top, 14)
-                PhaseBanner(Text("Memorize!", bundle: .module))
+                bannerView
                     .padding(.top, 24)
                 Spacer()
-                GridView(configuration: configuration)
-                    .aspectRatio(1, contentMode: .fit)
-                    .padding(.horizontal, 6)
+                GridView(
+                    configuration: gridConfiguration,
+                    onTouch: { viewModel.handleTouch(Coordinate(row: $0.row, column: $0.column)) },
+                    onTouchEnded: { viewModel.endTouch() }
+                )
+                .aspectRatio(1, contentMode: .fit)
+                .padding(.horizontal, 6)
                 Spacer()
-                Text("Path · 8 dots", bundle: .module)
-                    .font(.system(size: 10, weight: .semibold, design: .monospaced))
-                    .textCase(.uppercase)
-                    .kerning(1.4)
-                    .foregroundStyle(PMTheme.textFaint)
             }
             .padding(.horizontal, 26)
             .padding(.top, 10)
             .padding(.bottom, 22)
+
+            if viewModel.phase == .gameOver {
+                ResultView(
+                    score: viewModel.finalScore,
+                    best: viewModel.bestScore,
+                    review: reviewConfiguration,
+                    onRetry: { viewModel.retry() },
+                    onMenu: onExit
+                )
+                .transition(.opacity)
+            }
+        }
+        .animation(.easeInOut(duration: 0.25), value: viewModel.phase)
+        .task(id: viewModel.phase) {
+            switch viewModel.phase {
+            case .idle: viewModel.begin()
+            case .revealing: await viewModel.reveal()
+            case .phaseCleared: await viewModel.advance()
+            default: break
+            }
         }
     }
 
-    private var configuration: GridConfiguration {
-        var config = GridConfiguration(dotsPerSide: 6)
-        config.litDots = Set(Self.path)
-        config.trail = Self.path
+    private var gridConfiguration: GridConfiguration {
+        var config = GridConfiguration(dotsPerSide: viewModel.gridSize)
+        let pathPoints = viewModel.path.coordinates.map(gridPoint)
+        switch viewModel.phase {
+        case .idle, .revealing:
+            config.litDots = Set(pathPoints)
+            config.trail = pathPoints
+        case .recalling:
+            let traced = viewModel.activated.map(gridPoint)
+            config.correctDots = Set(traced)
+            config.userTrail = traced
+            config.userTrailColor = PMTheme.success
+            if let finger = viewModel.fingerCell {
+                config.fingerDot = gridPoint(finger)
+            }
+            if let wrong = viewModel.wrongCell {
+                config.wrongDots = [gridPoint(wrong)]
+            }
+        case .phaseCleared:
+            config.correctDots = Set(pathPoints)
+            config.trail = pathPoints
+            config.trailColor = PMTheme.success
+        case .gameOver:
+            break
+        }
         return config
+    }
+
+    private var reviewConfiguration: GridConfiguration? {
+        guard let review = viewModel.review else { return nil }
+        var config = GridConfiguration(dotsPerSide: viewModel.gridSize)
+        let path = review.path.map(gridPoint)
+        config.ghostDots = Set(path)
+        config.ghostTrail = path
+        let trace = review.trace.map(gridPoint)
+        config.correctDots = Set(trace)
+        config.userTrail = trace
+        config.userTrailColor = PMTheme.success
+        config.wrongDots = [gridPoint(review.wrong)]
+        return config
+    }
+
+    private func gridPoint(_ coordinate: Coordinate) -> GridPoint {
+        GridPoint(coordinate.row, coordinate.column)
+    }
+
+    @ViewBuilder
+    private var bannerView: some View {
+        switch viewModel.phase {
+        case .recalling where viewModel.wrongCell != nil:
+            PhaseBanner(Text("Missed", bundle: .module), tone: .danger)
+        case .recalling:
+            PhaseBanner(Text("Recall!", bundle: .module))
+        case .phaseCleared:
+            PhaseBanner(Text("Perfect!", bundle: .module), tone: .success)
+        default:
+            PhaseBanner(Text("Memorize!", bundle: .module))
+        }
     }
 
     private var closeRow: some View {
@@ -66,5 +135,5 @@ public struct GameView: View {
 }
 
 #Preview {
-    GameView(onExit: {})
+    GameView(difficulty: .normal, onExit: {})
 }

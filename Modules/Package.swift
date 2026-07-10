@@ -3,9 +3,15 @@ import PackageDescription
 
 let strict: [SwiftSetting] = [.unsafeFlags(["-warnings-as-errors"])]
 
+/// iOS-only so the host `swift test`/coverage build never compiles the
+/// snapshot toolchain (it runs only on the simulator).
 let snapshotTestDeps: [Target.Dependency] = [
-    "SnapshotSupport",
-    .product(name: "SnapshotTesting", package: "swift-snapshot-testing"),
+    .target(name: "SnapshotSupport", condition: .when(platforms: [.iOS])),
+    .product(
+        name: "SnapshotTesting",
+        package: "swift-snapshot-testing",
+        condition: .when(platforms: [.iOS])
+    ),
 ]
 
 let package = Package(
@@ -72,7 +78,13 @@ let package = Package(
         // Test-only helper target shared by the per-module snapshot targets.
         .target(
             name: "SnapshotSupport",
-            dependencies: [.product(name: "SnapshotTesting", package: "swift-snapshot-testing")],
+            dependencies: [
+                .product(
+                    name: "SnapshotTesting",
+                    package: "swift-snapshot-testing",
+                    condition: .when(platforms: [.iOS])
+                ),
+            ],
             path: "SnapshotSupport/Sources",
             swiftSettings: strict
         ),

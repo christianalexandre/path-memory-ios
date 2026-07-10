@@ -5,7 +5,7 @@ import SwiftUI
 struct MenuFeatureDemoApp: App {
     var body: some Scene {
         WindowGroup {
-            MenuView(onPlay: {})
+            MenuView(onPlay: { _ in })
                 .preferredColorScheme(.dark)
         }
     }

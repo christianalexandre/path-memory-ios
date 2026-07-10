@@ -1,18 +1,16 @@
+import Dependencies
+import Persistence
+@_exported import SharedModels
 import SwiftUI
 import UIComponents
 
 @MainActor
 public struct MenuView: View {
-    private enum Difficulty: CaseIterable, Hashable {
-        case easy
-        case normal
-        case hard
-    }
-
-    private let onPlay: () -> Void
+    private let onPlay: (Difficulty) -> Void
     @State private var difficulty: Difficulty = .normal
+    @Dependency(\.storageRepository) private var storage
 
-    public init(onPlay: @escaping () -> Void) {
+    public init(onPlay: @escaping (Difficulty) -> Void) {
         self.onPlay = onPlay
     }
 
@@ -79,7 +77,7 @@ public struct MenuView: View {
                 .textCase(.uppercase)
                 .kerning(1.8)
                 .foregroundStyle(PMTheme.textSecondary)
-            Text(verbatim: "1240")
+            Text(verbatim: "\(storage.bestScore(for: difficulty))")
                 .font(.system(size: 15, weight: .bold, design: .rounded))
                 .foregroundStyle(PMTheme.accent)
                 .shadow(color: PMTheme.accent.opacity(0.5), radius: 6)
@@ -100,7 +98,9 @@ public struct MenuView: View {
                     .foregroundStyle(PMTheme.textFaint)
                 DifficultyPills(options: Difficulty.allCases, selection: $difficulty, label: label(for:))
             }
-            Button(action: onPlay) {
+            Button {
+                onPlay(difficulty)
+            } label: {
                 HStack(spacing: 12) {
                     Image(systemName: "play.fill")
                     Text("Play", bundle: .module)
@@ -120,5 +120,5 @@ public struct MenuView: View {
 }
 
 #Preview {
-    MenuView(onPlay: {})
+    MenuView(onPlay: { _ in })
 }

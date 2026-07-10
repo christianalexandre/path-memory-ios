@@ -8,6 +8,7 @@ import UIComponents
 public struct MenuView: View {
     private let onPlay: (Difficulty) -> Void
     @State private var difficulty: Difficulty = .normal
+    @State private var bestScore = 0
     @Dependency(\.storageRepository) private var storage
 
     public init(onPlay: @escaping (Difficulty) -> Void) {
@@ -28,6 +29,19 @@ public struct MenuView: View {
             .padding(.top, 10)
             .padding(.bottom, 24)
         }
+        .task(id: difficulty) {
+            await refreshBestScore()
+        }
+    }
+
+    /// Off the main actor: the first storage access opens the database and runs
+    /// migrations, which must not block a body evaluation.
+    private func refreshBestScore() async {
+        let storage = storage
+        let difficulty = difficulty
+        bestScore = await Task.detached {
+            storage.bestScore(for: difficulty)
+        }.value
     }
 
     private var topBar: some View {
@@ -77,7 +91,7 @@ public struct MenuView: View {
                 .textCase(.uppercase)
                 .kerning(1.8)
                 .foregroundStyle(PMTheme.textSecondary)
-            Text(verbatim: "\(storage.bestScore(for: difficulty))")
+            Text(verbatim: "\(bestScore)")
                 .font(.system(size: 15, weight: .bold, design: .rounded))
                 .foregroundStyle(PMTheme.accent)
                 .shadow(color: PMTheme.accent.opacity(0.5), radius: 6)

@@ -1,5 +1,7 @@
 import XCTest
 
+// swiftlint:disable:next todo
+// TODO: Revise this integration test
 final class PathMemoryUITests: XCTestCase {
     @MainActor
     func testLaunchAndNavigateToGame() {

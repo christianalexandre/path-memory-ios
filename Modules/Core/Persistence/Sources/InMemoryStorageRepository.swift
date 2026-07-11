@@ -4,7 +4,7 @@ import SharedModels
 public final class InMemoryStorageRepository: StorageRepository, @unchecked Sendable {
     private let lock = NSLock()
     private var results: [GameResult] = []
-    private var misses: [Difficulty: [Coordinate: Int]] = [:]
+    private var misses: [MissEvent] = []
 
     public init() {}
 
@@ -21,8 +21,8 @@ public final class InMemoryStorageRepository: StorageRepository, @unchecked Send
         lock.withLock { results.append(result) }
     }
 
-    public func recordMiss(at coordinate: Coordinate, difficulty: Difficulty) {
-        lock.withLock { misses[difficulty, default: [:]][coordinate, default: 0] += 1 }
+    public func record(_ miss: MissEvent) {
+        lock.withLock { misses.append(miss) }
     }
 
     public var savedResults: [GameResult] {
@@ -30,6 +30,9 @@ public final class InMemoryStorageRepository: StorageRepository, @unchecked Send
     }
 
     public func missCount(at coordinate: Coordinate, difficulty: Difficulty) -> Int {
-        lock.withLock { misses[difficulty]?[coordinate] ?? 0 }
+        lock.withLock {
+            misses
+                .count(where: { $0.coordinate == coordinate && $0.difficulty == difficulty })
+        }
     }
 }

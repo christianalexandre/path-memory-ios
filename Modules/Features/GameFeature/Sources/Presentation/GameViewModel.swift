@@ -22,6 +22,7 @@ public final class GameViewModel {
     public private(set) var wrongCell: Coordinate?
     public private(set) var finalScore = 0
     public private(set) var review: RunReview?
+    public private(set) var bestScore = 0
 
     public var gridSize: Int {
         config.gridSize
@@ -45,16 +46,13 @@ public final class GameViewModel {
         config = GameConfig(difficulty: difficulty, phaseIndex: 1, gridCap: gridCap)
     }
 
-    public var bestScore: Int {
-        storage.bestScore(for: difficulty)
-    }
-
     public func begin() {
         guard phase == .idle else { return }
         score = 0
         level = 1
         lives = Self.maxLives
         review = nil
+        bestScore = storage.bestScore(for: difficulty)
         configurePhase()
         phase = .revealing
     }
@@ -142,7 +140,12 @@ public final class GameViewModel {
     private func registerMiss(at coordinate: Coordinate) {
         wrongCell = coordinate
         lives -= 1
-        storage.recordMiss(at: coordinate, difficulty: difficulty)
+        storage.record(MissEvent(
+            coordinate: coordinate,
+            difficulty: difficulty,
+            gridSize: config.gridSize,
+            date: date.now
+        ))
         haptics.failure()
         if lives <= 0 {
             endGame(wrong: coordinate)
@@ -164,7 +167,8 @@ public final class GameViewModel {
     private func endGame(wrong: Coordinate) {
         review = RunReview(path: path.coordinates, trace: activated, wrong: wrong)
         finalScore = score
-        storage.save(GameResult(score: score, level: level, difficulty: difficulty))
+        storage.save(GameResult(score: score, level: level, difficulty: difficulty, date: date.now))
+        bestScore = max(bestScore, finalScore)
         activated = []
         expected = []
         fingerCell = nil

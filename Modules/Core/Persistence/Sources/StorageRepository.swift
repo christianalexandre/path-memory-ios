@@ -1,16 +1,34 @@
 import Dependencies
+import OSLog
 import SharedModels
 
 public protocol StorageRepository: Sendable {
     func bestScore(for difficulty: Difficulty) -> Int
     func save(_ result: GameResult)
-    func recordMiss(at coordinate: Coordinate, difficulty: Difficulty)
+    func record(_ miss: MissEvent)
+    var savedResults: [GameResult] { get }
+    func missCount(at coordinate: Coordinate, difficulty: Difficulty) -> Int
+}
+
+extension Logger {
+    static let persistence = Logger(
+        subsystem: "com.christianalexandre.PathMemory",
+        category: "Persistence"
+    )
 }
 
 private enum StorageRepositoryKey: DependencyKey {
-    /// Shared instance so the best score survives across a session's runs.
-    static let liveValue: any StorageRepository = InMemoryStorageRepository()
-    /// Fresh per resolution for test isolation.
+    static let liveValue: any StorageRepository = {
+        do {
+            return try GRDBStorageRepository.onDisk()
+        } catch {
+            Logger.persistence.error(
+                "Falling back to in-memory storage: \(String(describing: error), privacy: .public)"
+            )
+            return InMemoryStorageRepository()
+        }
+    }()
+
     static var testValue: any StorageRepository {
         InMemoryStorageRepository()
     }

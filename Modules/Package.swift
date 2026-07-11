@@ -25,6 +25,7 @@ let package = Package(
         .library(name: "UIComponents", targets: ["UIComponents"]),
     ],
     dependencies: [
+        .package(url: "https://github.com/groue/GRDB.swift", from: "7.0.0"),
         .package(url: "https://github.com/pointfreeco/swift-dependencies", from: "1.0.0"),
         .package(url: "https://github.com/pointfreeco/swift-snapshot-testing", from: "1.18.0"),
     ],
@@ -46,6 +47,7 @@ let package = Package(
             name: "Persistence",
             dependencies: [
                 "SharedModels",
+                .product(name: "GRDB", package: "GRDB.swift"),
                 .product(name: "Dependencies", package: "swift-dependencies"),
             ],
             path: "Core/Persistence/Sources",

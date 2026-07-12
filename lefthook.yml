@@ -9,6 +9,11 @@ pre-commit:
       glob: "*.swift"
       run: swiftlint lint --strict {staged_files}
 
+commit-msg:
+  commands:
+    no-coauthor:
+      run: ./scripts/check-commit-msg.sh {1}
+
 pre-push:
   commands:
     tests:

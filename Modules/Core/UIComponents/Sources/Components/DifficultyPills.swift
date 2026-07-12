@@ -13,14 +13,17 @@ public struct DifficultyPills<Option: Hashable>: View {
     }
 
     public var body: some View {
-        HStack(spacing: 6) {
+        HStack(spacing: PMSpace.sm) {
             ForEach(options, id: \.self) { option in
                 pill(for: option)
             }
         }
-        .padding(5)
-        .background(Color.white.opacity(0.04), in: RoundedRectangle(cornerRadius: 18))
-        .overlay(RoundedRectangle(cornerRadius: 18).strokeBorder(Color.white.opacity(0.07), lineWidth: 1))
+        .padding(PMSpace.xs)
+        .background(PMTheme.fillSubtle, in: RoundedRectangle(cornerRadius: PMRadius.xl))
+        .overlay(RoundedRectangle(cornerRadius: PMRadius.xl).strokeBorder(
+            PMTheme.strokeFaint,
+            lineWidth: PMStroke.hairline
+        ))
     }
 
     private func pill(for option: Option) -> some View {
@@ -31,15 +34,16 @@ public struct DifficultyPills<Option: Hashable>: View {
             }
         } label: {
             label(option)
-                .font(.system(size: 14, weight: isSelected ? .bold : .semibold, design: .rounded))
+                .font(PMFont.body)
+                .fontWeight(isSelected ? .bold : .semibold)
                 .frame(maxWidth: .infinity)
-                .padding(.vertical, 12)
+                .padding(.vertical, PMSpace.md)
         }
         .buttonStyle(.plain)
         .foregroundStyle(isSelected ? PMTheme.onAccent : PMTheme.textPrimary.opacity(0.45))
         .background {
             if isSelected {
-                RoundedRectangle(cornerRadius: 14)
+                RoundedRectangle(cornerRadius: PMRadius.lg)
                     .fill(PMTheme.pillGradient)
                     .shadow(color: PMTheme.accent.opacity(0.45), radius: 11)
             }

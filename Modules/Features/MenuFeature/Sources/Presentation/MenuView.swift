@@ -25,9 +25,9 @@ public struct MenuView: View {
                 Spacer()
                 controls
             }
-            .padding(.horizontal, 26)
-            .padding(.top, 10)
-            .padding(.bottom, 24)
+            .padding(.horizontal, PMSpace.xxl)
+            .padding(.top, PMSpace.md)
+            .padding(.bottom, PMSpace.xxl)
         }
         .task(id: difficulty) {
             await refreshBestScore()
@@ -57,18 +57,21 @@ public struct MenuView: View {
             // No-op until stats/settings exist.
         } label: {
             Image(systemName: systemName)
-                .font(.system(size: 17, weight: .semibold))
+                .font(PMFont.callout)
                 .foregroundStyle(PMTheme.accent)
-                .frame(width: 46, height: 46)
-                .background(Color.white.opacity(0.04), in: RoundedRectangle(cornerRadius: 16))
-                .overlay(RoundedRectangle(cornerRadius: 16).strokeBorder(Color.white.opacity(0.09), lineWidth: 1))
+                .frame(width: 48, height: 48)
+                .background(PMTheme.fillSubtle, in: RoundedRectangle(cornerRadius: PMRadius.lg))
+                .overlay(RoundedRectangle(cornerRadius: PMRadius.lg).strokeBorder(
+                    PMTheme.strokeSubtle,
+                    lineWidth: PMStroke.hairline
+                ))
         }
         .buttonStyle(.plain)
         .accessibilityLabel(accessibility)
     }
 
     private var titleBlock: some View {
-        VStack(spacing: 20) {
+        VStack(spacing: PMSpace.xl) {
             bestScoreChip
             VStack(spacing: 0) {
                 Text(verbatim: "Path")
@@ -77,36 +80,38 @@ public struct MenuView: View {
                     .foregroundStyle(PMTheme.accent)
                     .shadow(color: PMTheme.accent.opacity(0.6), radius: 20)
             }
-            .font(.system(size: 52, weight: .bold, design: .rounded))
+            .font(PMFont.display)
             Text("Trace the path from memory", bundle: .module)
-                .font(.system(size: 13, design: .rounded))
+                .font(PMFont.caption)
+                .fontWeight(.regular)
                 .foregroundStyle(PMTheme.textSecondary)
         }
     }
 
     private var bestScoreChip: some View {
-        HStack(spacing: 8) {
+        HStack(spacing: PMSpace.sm) {
             Text("Best", bundle: .module)
-                .font(.system(size: 9, weight: .semibold, design: .monospaced))
+                .font(PMFont.overline)
                 .textCase(.uppercase)
                 .kerning(1.8)
                 .foregroundStyle(PMTheme.textSecondary)
             Text(verbatim: "\(bestScore)")
-                .font(.system(size: 15, weight: .bold, design: .rounded))
+                .font(PMFont.callout)
+                .fontWeight(.bold)
                 .foregroundStyle(PMTheme.accent)
                 .shadow(color: PMTheme.accent.opacity(0.5), radius: 6)
         }
-        .padding(.horizontal, 16)
-        .padding(.vertical, 8)
-        .background(Color.white.opacity(0.03), in: Capsule())
-        .overlay(Capsule().strokeBorder(PMTheme.accent.opacity(0.22), lineWidth: 1))
+        .padding(.horizontal, PMSpace.lg)
+        .padding(.vertical, PMSpace.sm)
+        .background(PMTheme.fillSubtle, in: Capsule())
+        .overlay(Capsule().strokeBorder(PMTheme.accent.opacity(0.22), lineWidth: PMStroke.hairline))
     }
 
     private var controls: some View {
-        VStack(spacing: 22) {
-            VStack(spacing: 10) {
+        VStack(spacing: PMSpace.xxl) {
+            VStack(spacing: PMSpace.md) {
                 Text("Difficulty", bundle: .module)
-                    .font(.system(size: 9, weight: .semibold, design: .monospaced))
+                    .font(PMFont.overline)
                     .textCase(.uppercase)
                     .kerning(1.8)
                     .foregroundStyle(PMTheme.textFaint)
@@ -115,7 +120,7 @@ public struct MenuView: View {
             Button {
                 onPlay(difficulty)
             } label: {
-                HStack(spacing: 12) {
+                HStack(spacing: PMSpace.md) {
                     Image(systemName: "play.fill")
                     Text("Play", bundle: .module)
                 }

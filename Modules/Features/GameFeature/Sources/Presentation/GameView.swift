@@ -27,9 +27,9 @@ public struct GameView: View {
             VStack(spacing: 0) {
                 closeRow
                 HUDView(score: viewModel.score, level: viewModel.level, lives: viewModel.lives)
-                    .padding(.top, 14)
+                    .padding(.top, PMSpace.lg)
                 bannerView
-                    .padding(.top, 24)
+                    .padding(.top, PMSpace.xxl)
                 Spacer()
                 GridView(
                     configuration: gridConfiguration,
@@ -37,12 +37,12 @@ public struct GameView: View {
                     onTouchEnded: { viewModel.endTouch() }
                 )
                 .aspectRatio(1, contentMode: .fit)
-                .padding(.horizontal, 6)
+                .padding(.horizontal, PMSpace.sm)
                 Spacer()
             }
-            .padding(.horizontal, 26)
-            .padding(.top, 10)
-            .padding(.bottom, 22)
+            .padding(.horizontal, PMSpace.xxl)
+            .padding(.top, PMSpace.md)
+            .padding(.bottom, PMSpace.xxl)
 
             if viewModel.phase == .gameOver {
                 ResultView(
@@ -131,11 +131,12 @@ public struct GameView: View {
         HStack {
             Button(action: onExit) {
                 Image(systemName: "xmark")
-                    .font(.system(size: 13, weight: .semibold))
+                    .font(PMFont.caption)
+                    .fontWeight(.semibold)
                     .foregroundStyle(PMTheme.textSecondary)
-                    .frame(width: 34, height: 34)
-                    .background(Color.white.opacity(0.04), in: Circle())
-                    .overlay(Circle().strokeBorder(Color.white.opacity(0.09), lineWidth: 1))
+                    .frame(width: 32, height: 32)
+                    .background(PMTheme.fillSubtle, in: Circle())
+                    .overlay(Circle().strokeBorder(PMTheme.strokeSubtle, lineWidth: PMStroke.hairline))
             }
             .buttonStyle(.plain)
             .accessibilityLabel(Text("Close", bundle: .module))

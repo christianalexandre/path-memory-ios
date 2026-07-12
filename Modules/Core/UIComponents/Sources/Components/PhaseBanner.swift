@@ -17,19 +17,19 @@ public struct PhaseBanner: View {
     }
 
     public var body: some View {
-        HStack(spacing: 9) {
+        HStack(spacing: PMSpace.sm) {
             Circle()
                 .fill(color)
-                .frame(width: 7, height: 7)
+                .frame(width: 8, height: 8)
                 .shadow(color: color, radius: 4)
             text
-                .font(.system(size: 15, weight: .semibold, design: .rounded))
+                .font(PMFont.callout)
                 .foregroundStyle(color)
         }
-        .padding(.horizontal, 20)
-        .padding(.vertical, 9)
+        .padding(.horizontal, PMSpace.xl)
+        .padding(.vertical, PMSpace.sm)
         .background(color.opacity(0.08), in: Capsule())
-        .overlay(Capsule().strokeBorder(color.opacity(0.32), lineWidth: 1))
+        .overlay(Capsule().strokeBorder(color.opacity(0.32), lineWidth: PMStroke.hairline))
         .shadow(color: color.opacity(0.16), radius: 12)
     }
 

@@ -5,11 +5,11 @@ public struct NeonPrimaryButtonStyle: ButtonStyle {
 
     public func makeBody(configuration: Configuration) -> some View {
         configuration.label
-            .font(.system(size: 19, weight: .bold, design: .rounded))
+            .font(PMFont.title)
             .foregroundStyle(PMTheme.onAccent)
             .frame(maxWidth: .infinity)
-            .frame(height: 66)
-            .background(PMTheme.playGradient, in: RoundedRectangle(cornerRadius: 24))
+            .frame(height: 64)
+            .background(PMTheme.playGradient, in: RoundedRectangle(cornerRadius: PMRadius.xxl))
             .shadow(color: PMTheme.accent.opacity(configuration.isPressed ? 0.25 : 0.45), radius: 17, y: 5)
             .scaleEffect(configuration.isPressed ? 0.97 : 1)
             .animation(.easeOut(duration: 0.15), value: configuration.isPressed)
@@ -27,12 +27,15 @@ public struct GhostButtonStyle: ButtonStyle {
 
     public func makeBody(configuration: Configuration) -> some View {
         configuration.label
-            .font(.system(size: 17, weight: .semibold, design: .rounded))
+            .font(PMFont.callout)
             .foregroundStyle(PMTheme.textPrimary)
             .frame(maxWidth: .infinity)
-            .frame(height: 58)
-            .background(Color.white.opacity(0.04), in: RoundedRectangle(cornerRadius: 20))
-            .overlay(RoundedRectangle(cornerRadius: 20).strokeBorder(Color.white.opacity(0.12), lineWidth: 1))
+            .frame(height: 56)
+            .background(PMTheme.fillSubtle, in: RoundedRectangle(cornerRadius: PMRadius.xl))
+            .overlay(RoundedRectangle(cornerRadius: PMRadius.xl).strokeBorder(
+                PMTheme.strokeSubtle,
+                lineWidth: PMStroke.hairline
+            ))
             .scaleEffect(configuration.isPressed ? 0.97 : 1)
             .animation(.easeOut(duration: 0.15), value: configuration.isPressed)
     }

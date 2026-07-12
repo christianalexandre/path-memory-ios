@@ -16,15 +16,15 @@ struct ResultView: View {
                 Spacer()
                 PhaseBanner(Text("Game Over", bundle: .module), tone: .danger)
                 scoreBlock
-                    .padding(.top, 24)
+                    .padding(.top, PMSpace.xxl)
                 if let review {
                     reviewBoard(review)
-                        .padding(.top, 24)
+                        .padding(.top, PMSpace.xxl)
                 }
                 Spacer()
-                VStack(spacing: 14) {
+                VStack(spacing: PMSpace.lg) {
                     Button(action: onRetry) {
-                        HStack(spacing: 12) {
+                        HStack(spacing: PMSpace.md) {
                             Image(systemName: "arrow.clockwise")
                             Text("Retry", bundle: .module)
                         }
@@ -36,40 +36,41 @@ struct ResultView: View {
                     .buttonStyle(.ghost)
                 }
             }
-            .padding(.horizontal, 32)
-            .padding(.top, 10)
-            .padding(.bottom, 30)
+            .padding(.horizontal, PMSpace.xxxl)
+            .padding(.top, PMSpace.md)
+            .padding(.bottom, PMSpace.xxxl)
         }
     }
 
     private var scoreBlock: some View {
-        VStack(spacing: 12) {
+        VStack(spacing: PMSpace.md) {
             caption(Text("Your score", bundle: .module))
             Text(verbatim: "\(score)")
-                .font(.system(size: 60, weight: .bold, design: .rounded))
+                .font(PMFont.displayXL)
                 .foregroundStyle(PMTheme.accent)
                 .shadow(color: PMTheme.accent.opacity(0.6), radius: 20)
-            HStack(spacing: 8) {
+            HStack(spacing: PMSpace.sm) {
                 caption(Text("Best", bundle: .module))
                 Text(verbatim: "\(best)")
-                    .font(.system(size: 15, weight: .bold, design: .rounded))
+                    .font(PMFont.callout)
+                    .fontWeight(.bold)
                     .foregroundStyle(PMTheme.textPrimary)
             }
-            .padding(.horizontal, 16)
-            .padding(.vertical, 8)
-            .background(Color.white.opacity(0.03), in: Capsule())
-            .overlay(Capsule().strokeBorder(PMTheme.accent.opacity(0.22), lineWidth: 1))
+            .padding(.horizontal, PMSpace.lg)
+            .padding(.vertical, PMSpace.sm)
+            .background(PMTheme.fillSubtle, in: Capsule())
+            .overlay(Capsule().strokeBorder(PMTheme.accent.opacity(0.22), lineWidth: PMStroke.hairline))
         }
     }
 
     private func reviewBoard(_ config: GridConfiguration) -> some View {
-        VStack(spacing: 12) {
+        VStack(spacing: PMSpace.md) {
             caption(Text("The path", bundle: .module))
             GridView(configuration: config)
                 .aspectRatio(1, contentMode: .fit)
                 .frame(maxWidth: 180)
                 .allowsHitTesting(false)
-            HStack(spacing: 18) {
+            HStack(spacing: PMSpace.xl) {
                 legendItem(color: PMTheme.success, label: Text("You", bundle: .module))
                 legendItem(color: PMTheme.danger, label: Text("Missed", bundle: .module))
             }
@@ -77,17 +78,17 @@ struct ResultView: View {
     }
 
     private func legendItem(color: Color, label: Text) -> some View {
-        HStack(spacing: 6) {
+        HStack(spacing: PMSpace.sm) {
             Circle().fill(color).frame(width: 8, height: 8)
             label
-                .font(.system(size: 11, weight: .medium, design: .rounded))
+                .font(PMFont.caption)
                 .foregroundStyle(PMTheme.textSecondary)
         }
     }
 
     private func caption(_ text: Text) -> some View {
         text
-            .font(.system(size: 9, weight: .semibold, design: .monospaced))
+            .font(PMFont.overline)
             .textCase(.uppercase)
             .kerning(1.8)
             .foregroundStyle(PMTheme.textSecondary)

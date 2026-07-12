@@ -15,29 +15,29 @@ public struct TimerRing: View {
     public var body: some View {
         ZStack {
             Circle()
-                .stroke(Color.white.opacity(0.08), lineWidth: 3)
+                .stroke(PMTheme.strokeFaint, lineWidth: PMStroke.thick)
             Circle()
                 .trim(from: 0, to: isActive ? progress : 1)
-                .stroke(ringColor, style: StrokeStyle(lineWidth: 3, lineCap: .round))
+                .stroke(ringColor, style: StrokeStyle(lineWidth: PMStroke.thick, lineCap: .round))
                 .rotationEffect(.degrees(-90))
                 .shadow(color: isActive ? ringColor.opacity(0.8) : .clear, radius: 4)
-            VStack(spacing: 2) {
+            VStack(spacing: PMSpace.xs) {
                 Text(verbatim: "\(level)")
-                    .font(.system(size: 18, weight: .bold, design: .rounded))
+                    .font(PMFont.headline)
                     .foregroundStyle(PMTheme.textPrimary)
                 Text("Level", bundle: .module)
-                    .font(.system(size: 7, weight: .semibold, design: .monospaced))
+                    .font(PMFont.overline)
                     .textCase(.uppercase)
                     .kerning(0.8)
                     .foregroundStyle(PMTheme.textFaint)
             }
         }
-        .padding(2)
-        .frame(width: 54, height: 54)
+        .padding(PMSpace.xs)
+        .frame(width: 56, height: 56)
     }
 
     private var ringColor: Color {
-        guard isActive else { return Color.white.opacity(0.14) }
+        guard isActive else { return PMTheme.strokeStrong }
         return progress < 0.3 ? PMTheme.danger : PMTheme.accent
     }
 }

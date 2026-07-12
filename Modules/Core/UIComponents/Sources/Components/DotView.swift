@@ -23,10 +23,10 @@ public struct DotView: View {
         ZStack {
             switch state {
             case .ghost:
-                Circle().strokeBorder(PMTheme.accent.opacity(0.5), lineWidth: 1.6)
+                Circle().strokeBorder(PMTheme.accent.opacity(0.5), lineWidth: PMStroke.thin)
             case .idle:
                 Circle().fill(fill)
-                Circle().strokeBorder(Color.white.opacity(0.05), lineWidth: 1)
+                Circle().strokeBorder(PMTheme.strokeFaint, lineWidth: PMStroke.hairline)
             default:
                 Circle().fill(fill)
             }
@@ -42,11 +42,11 @@ public struct DotView: View {
         case .finger:
             [.white, PMTheme.accentBright, PMTheme.accent]
         case .correct:
-            [Color(hex: 0xE2FFF1), PMTheme.success, PMTheme.success.opacity(0.6)]
+            [PMTheme.successBright, PMTheme.success, PMTheme.success.opacity(0.6)]
         case .wrong:
-            [Color(hex: 0xFFDCEC), PMTheme.danger, PMTheme.danger.opacity(0.6)]
+            [PMTheme.dangerBright, PMTheme.danger, PMTheme.danger.opacity(0.6)]
         default:
-            [Color(hex: 0x96B9C3).opacity(0.16), Color(hex: 0x5A7882).opacity(0.045)]
+            [PMTheme.dotIdleHighlight.opacity(0.16), PMTheme.dotIdleShadow.opacity(0.045)]
         }
         return RadialGradient(
             colors: colors,

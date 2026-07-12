@@ -121,7 +121,7 @@ private struct TouchDisc: View {
                     endRadius: radius
                 )
             )
-            .overlay(Circle().strokeBorder(PMTheme.accentBright.opacity(0.45), lineWidth: 1.5))
+            .overlay(Circle().strokeBorder(PMTheme.accentBright.opacity(0.45), lineWidth: PMStroke.thin))
             .frame(width: radius * 2, height: radius * 2)
             .shadow(color: PMTheme.accent.opacity(0.35), radius: 11)
             .scaleEffect(pulsing ? 1.18 : 1)

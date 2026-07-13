@@ -127,7 +127,7 @@ private struct TouchDisc: View {
             .scaleEffect(pulsing ? 1.18 : 1)
             .opacity(pulsing ? 0.5 : 0.85)
             .onAppear {
-                withAnimation(.easeInOut(duration: 0.8).repeatForever(autoreverses: true)) {
+                withAnimation(.easeInOut(duration: PMDuration.slow).repeatForever(autoreverses: true)) {
                     pulsing = true
                 }
             }

@@ -19,6 +19,13 @@
             assertSnapshot(of: view, as: Snap.sized(CGSize(width: 400, height: 92)))
         }
 
+        @Test func wordmark() {
+            let view = PMWordmark()
+                .padding(40)
+                .background(PMTheme.base)
+            assertSnapshot(of: view, as: Snap.sized(CGSize(width: 300, height: 200)))
+        }
+
         @Test func hud() {
             let view = HUDView(score: 1280, level: 4, lives: 2, timerProgress: 0.6, isTimerActive: true)
                 .padding(24)

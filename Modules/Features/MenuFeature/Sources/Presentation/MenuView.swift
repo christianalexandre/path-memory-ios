@@ -73,14 +73,7 @@ public struct MenuView: View {
     private var titleBlock: some View {
         VStack(spacing: PMSpace.xl) {
             bestScoreChip
-            VStack(spacing: 0) {
-                Text(verbatim: "Path")
-                    .foregroundStyle(PMTheme.textPrimary)
-                Text(verbatim: "Memory")
-                    .foregroundStyle(PMTheme.accent)
-                    .shadow(color: PMTheme.accent.opacity(0.6), radius: 20)
-            }
-            .font(PMFont.display)
+            PMWordmark()
             Text("Trace the path from memory", bundle: .module)
                 .font(PMFont.caption)
                 .fontWeight(.regular)

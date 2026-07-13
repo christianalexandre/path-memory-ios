@@ -29,7 +29,7 @@ public struct DifficultyPills<Option: Hashable>: View {
     private func pill(for option: Option) -> some View {
         let isSelected = option == selection
         return Button {
-            withAnimation(.easeOut(duration: 0.18)) {
+            withAnimation(.easeOut(duration: PMDuration.medium)) {
                 selection = option
             }
         } label: {

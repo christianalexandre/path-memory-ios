@@ -12,7 +12,7 @@ public struct NeonPrimaryButtonStyle: ButtonStyle {
             .background(PMTheme.playGradient, in: RoundedRectangle(cornerRadius: PMRadius.xxl))
             .shadow(color: PMTheme.accent.opacity(configuration.isPressed ? 0.25 : 0.45), radius: 17, y: 5)
             .scaleEffect(configuration.isPressed ? 0.97 : 1)
-            .animation(.easeOut(duration: 0.15), value: configuration.isPressed)
+            .animation(.easeOut(duration: PMDuration.fast), value: configuration.isPressed)
     }
 }
 
@@ -37,7 +37,7 @@ public struct GhostButtonStyle: ButtonStyle {
                 lineWidth: PMStroke.hairline
             ))
             .scaleEffect(configuration.isPressed ? 0.97 : 1)
-            .animation(.easeOut(duration: 0.15), value: configuration.isPressed)
+            .animation(.easeOut(duration: PMDuration.fast), value: configuration.isPressed)
     }
 }
 

@@ -23,6 +23,7 @@ let package = Package(
         .library(name: "GameFeature", targets: ["GameFeature"]),
         .library(name: "MenuFeature", targets: ["MenuFeature"]),
         .library(name: "UIComponents", targets: ["UIComponents"]),
+        .library(name: "Persistence", targets: ["Persistence"]),
     ],
     dependencies: [
         .package(url: "https://github.com/groue/GRDB.swift", from: "7.0.0"),

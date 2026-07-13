@@ -18,16 +18,8 @@ extension Logger {
 }
 
 private enum StorageRepositoryKey: DependencyKey {
-    static let liveValue: any StorageRepository = {
-        do {
-            return try GRDBStorageRepository.onDisk()
-        } catch {
-            Logger.persistence.error(
-                "Falling back to in-memory storage: \(String(describing: error), privacy: .public)"
-            )
-            return InMemoryStorageRepository()
-        }
-    }()
+    /// Lazy fallback for contexts without the launch bootstrap (demos, previews).
+    static let liveValue: any StorageRepository = StorageBootstrap.makeLive()
 
     static var testValue: any StorageRepository {
         InMemoryStorageRepository()

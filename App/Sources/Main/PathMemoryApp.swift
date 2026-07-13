@@ -4,7 +4,7 @@ import SwiftUI
 struct PathMemoryApp: App {
     var body: some Scene {
         WindowGroup {
-            RootView()
+            AppRootView()
         }
     }
 }

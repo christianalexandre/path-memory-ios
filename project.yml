@@ -30,6 +30,8 @@ targets:
     settings:
       base:
         INFOPLIST_KEY_UISupportedInterfaceOrientations: UIInterfaceOrientationPortrait
+        INFOPLIST_KEY_UILaunchScreen_Generation: "NO"
+        INFOPLIST_KEY_UILaunchStoryboardName: LaunchScreen
     dependencies:
       - package: PathMemoryKit
         product: GameFeature
@@ -37,6 +39,8 @@ targets:
         product: MenuFeature
       - package: PathMemoryKit
         product: UIComponents
+      - package: PathMemoryKit
+        product: Persistence
     preBuildScripts:
       - name: SwiftLint
         basedOnDependencyAnalysis: false

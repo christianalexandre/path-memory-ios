@@ -2,7 +2,7 @@ import GameFeature
 import MenuFeature
 import SwiftUI
 
-struct RootView: View {
+struct AppRouter: View {
     private enum Screen {
         case menu
         case game(Difficulty)
@@ -19,6 +19,5 @@ struct RootView: View {
                 GameView(difficulty: difficulty, onExit: { screen = .menu })
             }
         }
-        .preferredColorScheme(.dark)
     }
 }

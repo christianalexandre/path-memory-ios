@@ -7,10 +7,14 @@ struct LoadingGrid: View {
 
     @State private var frame = 0
 
-    var body: some View {
+    private var configuration: GridConfiguration {
         var configuration = GridConfiguration(dotsPerSide: 2)
         configuration.litDots = Self.frames[frame]
-        return GridView(configuration: configuration)
+        return configuration
+    }
+
+    var body: some View {
+        GridView(configuration: configuration)
             .task {
                 while !Task.isCancelled {
                     try? await Task.sleep(for: .seconds(PMDuration.medium))

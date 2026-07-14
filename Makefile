@@ -1,6 +1,6 @@
 .DEFAULT_GOAL := help
 SCHEME := PathMemory
-SIMULATOR ?= iPhone 16 Pro
+SIMULATOR ?= iPhone 17 Pro
 # Override with a UDID where the name lookup fails: SIM_DEST='id=<sim-udid>'
 SIM_DEST ?= platform=iOS Simulator,name=$(SIMULATOR)
 SNAPSHOT_ONLY := -only-testing:GameFeatureSnapshotTests \

@@ -1,11 +1,11 @@
 import SwiftUI
 
 struct AppRootView: View {
-    @State private var phase: AppPhase = .launching
+    @State private var model = LaunchViewModel()
 
     var body: some View {
         Group {
-            switch phase {
+            switch model.phase {
             case .launching:
                 SplashView()
             case .ready:
@@ -14,9 +14,7 @@ struct AppRootView: View {
         }
         .preferredColorScheme(.dark)
         .task {
-            guard case .launching = phase else { return }
-            await AppBootstrap.run()
-            phase = .ready
+            await model.start()
         }
     }
 }

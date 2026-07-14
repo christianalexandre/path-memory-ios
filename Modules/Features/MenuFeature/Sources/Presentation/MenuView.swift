@@ -1,5 +1,3 @@
-import Dependencies
-import Persistence
 @_exported import SharedModels
 import SwiftUI
 import UIComponents
@@ -7,9 +5,7 @@ import UIComponents
 @MainActor
 public struct MenuView: View {
     private let onPlay: (Difficulty) -> Void
-    @State private var difficulty: Difficulty = .normal
-    @State private var bestScore = 0
-    @Dependency(\.storageRepository) private var storage
+    @State private var viewModel = MenuViewModel()
 
     public init(onPlay: @escaping (Difficulty) -> Void) {
         self.onPlay = onPlay
@@ -29,19 +25,6 @@ public struct MenuView: View {
             .padding(.top, PMSpace.md)
             .padding(.bottom, PMSpace.xxl)
         }
-        .task(id: difficulty) {
-            await refreshBestScore()
-        }
-    }
-
-    /// Off the main actor: the first storage access opens the database and runs
-    /// migrations, which must not block a body evaluation.
-    private func refreshBestScore() async {
-        let storage = storage
-        let difficulty = difficulty
-        bestScore = await Task.detached {
-            storage.bestScore(for: difficulty)
-        }.value
     }
 
     private var topBar: some View {
@@ -88,7 +71,7 @@ public struct MenuView: View {
                 .textCase(.uppercase)
                 .kerning(1.8)
                 .foregroundStyle(PMTheme.textSecondary)
-            Text(verbatim: "\(bestScore)")
+            Text(verbatim: "\(viewModel.bestScore)")
                 .font(PMFont.callout)
                 .fontWeight(.bold)
                 .foregroundStyle(PMTheme.accent)
@@ -108,10 +91,10 @@ public struct MenuView: View {
                     .textCase(.uppercase)
                     .kerning(1.8)
                     .foregroundStyle(PMTheme.textFaint)
-                DifficultyPills(options: Difficulty.allCases, selection: $difficulty, label: label(for:))
+                DifficultyPills(options: Difficulty.allCases, selection: $viewModel.difficulty, label: label(for:))
             }
             Button {
-                onPlay(difficulty)
+                onPlay(viewModel.difficulty)
             } label: {
                 HStack(spacing: PMSpace.md) {
                     Image(systemName: "play.fill")
